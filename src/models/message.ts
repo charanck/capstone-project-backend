@@ -1,6 +1,4 @@
-import { Schema, model, connect,Model ,Types} from 'mongoose';
-import { User ,UserInterface} from './user';
-
+import { Schema, model,Model ,Types} from 'mongoose';
 
 export interface MessageInterface extends Document{
     content:String,

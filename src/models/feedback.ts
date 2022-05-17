@@ -1,5 +1,4 @@
 import { Schema, model, connect,Model } from 'mongoose';
-import { User ,UserInterface} from './user';
 
 export interface FeedbackInterface extends Document{
     answerOne:String,

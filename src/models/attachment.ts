@@ -1,20 +1,16 @@
 import { Schema, model,Model, Types } from 'mongoose';
 
 export interface AttachmentInterface extends Document{
-    attachmentURL:String,
-    mimeType:String,
-    publicId:String,
+    attachmentURL:string,
+    publicId:string,
     createdOn:Date,
     attachmentFrom:Types.ObjectId,
-    attachmentTo:Types.ObjectId
+    attachmentTo:Types.ObjectId,
+    status:string
 };
 
 const attachmentSchema:Schema<AttachmentInterface> = new Schema<AttachmentInterface>({
     attachmentURL:{
-        type:String,
-        required:true
-    },
-    mimeType:{
         type:String,
         required:true
     },
@@ -35,6 +31,9 @@ const attachmentSchema:Schema<AttachmentInterface> = new Schema<AttachmentInterf
         type:Schema.Types.ObjectId,
         ref:'user',
         required:true
+    },
+    status:{
+        type:String
     }
 });
 

@@ -14,7 +14,7 @@ export const authorizeUser = async(req:Request,res:Response,next:NextFunction)=>
     }
     const userId = data.userId;
     const user = await User.findOne({_id:userId});
-    if(!user.deactivatedOn)return res.status(401).json({message:"user is deactivated"});
+    if(user.deactivatedOn !== null)return res.status(401).json({message:"user is deactivated"});
     if(!user)return res.status(401).json({message:"user is unauthorized"});
     next();
 }
