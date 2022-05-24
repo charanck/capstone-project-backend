@@ -26,7 +26,7 @@ export const sendAttachment = async (req: Request, res: Response) => {
     const attachmentTo = await User.findById(req.body.attachmentTo);
 
     const newAttachment = new Attachment({
-        attachmentURL: uploadedFile.url,
+        attachmentURL: uploadedFile.secure_url,
         attachmentFrom: attachmentFrom,
         attachmentTo: attachmentTo,
         createdOn: new Date(),
