@@ -32,7 +32,7 @@ const sendAttachment = (req, res) => __awaiter(void 0, void 0, void 0, function*
     const attachmentFrom = yield user_1.User.findById(userId);
     const attachmentTo = yield user_1.User.findById(req.body.attachmentTo);
     const newAttachment = new attachment_1.Attachment({
-        attachmentURL: uploadedFile.url,
+        attachmentURL: uploadedFile.secure_url,
         attachmentFrom: attachmentFrom,
         attachmentTo: attachmentTo,
         createdOn: new Date(),
