@@ -10,4 +10,4 @@ export const attachmentRouter = Router();
 
 attachmentRouter.post("/", authorizeUser, sendAttachment);
 
-attachmentRouter.delete("/:attachmentId", deleteAttachment);
+attachmentRouter.delete("/:attachmentId",authorizeUser, deleteAttachment);

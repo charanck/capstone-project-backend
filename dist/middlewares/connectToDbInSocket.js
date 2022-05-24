@@ -12,26 +12,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authorizeUser = void 0;
-const user_1 = require("../models/user");
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const authorizeUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const token = String(req.headers['token']);
-    let data;
-    try {
-        data = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET_KEY);
-    }
-    catch (err) {
-        res.status(401).json({ message: err.message });
-        return;
-    }
-    const userId = data.userId;
-    const user = yield user_1.User.findOne({ _id: userId });
-    if (user.deactivatedOn !== null)
-        return res.status(401).json({ message: "user is deactivated" });
-    if (!user)
-        return res.status(401).json({ message: "user is unauthorized" });
-    next();
+exports.initializeDBSocket = void 0;
+const mongoose_1 = __importDefault(require("mongoose"));
+const config_1 = require("../config");
+function getDB() {
+    return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield mongoose_1.default.connect(config_1.DBURI);
+            resolve(0);
+        }
+        catch (err) {
+            reject(err);
+        }
+    }));
+}
+const initializeDBSocket = () => __awaiter(void 0, void 0, void 0, function* () {
+    yield getDB();
 });
-exports.authorizeUser = authorizeUser;
-//# sourceMappingURL=authorizeUser.js.map
+exports.initializeDBSocket = initializeDBSocket;
+//# sourceMappingURL=connectToDbInSocket.js.map

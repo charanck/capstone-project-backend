@@ -3,7 +3,6 @@ import { Schema, model, Model, Types, Document } from "mongoose";
 export interface UserInterface extends Document {
     username: string;
     email: string;
-    DOB: Date;
     gender: string;
     deactivatedOn: Date;
     hash: string;
@@ -29,10 +28,6 @@ const userSchema = new Schema<UserInterface>({
             /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
             "Please fill a valid email address"
         ]
-    },
-    DOB: {
-        type: Date,
-        required: true
     },
     gender: {
         type: String,

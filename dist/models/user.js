@@ -2,22 +2,20 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const mongoose_1 = require("mongoose");
-;
 const userSchema = new mongoose_1.Schema({
     username: {
         type: String,
         required: true,
-        unique: true,
+        unique: true
     },
     email: {
         type: String,
         required: true,
         unique: true,
-        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
-    },
-    DOB: {
-        type: Date,
-        required: true,
+        match: [
+            /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+            "Please fill a valid email address"
+        ]
     },
     gender: {
         type: String,
@@ -50,7 +48,11 @@ const userSchema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "feedback",
         default: null
+    },
+    role: {
+        type: String,
+        required: true
     }
 });
-exports.User = (0, mongoose_1.model)('user', userSchema);
+exports.User = (0, mongoose_1.model)("user", userSchema);
 //# sourceMappingURL=user.js.map

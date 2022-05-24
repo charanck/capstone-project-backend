@@ -1,12 +1,10 @@
 import { v2 as cloudinary } from "cloudinary";
 import { Request, Response } from "express";
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 import { Attachment, AttachmentInterface } from "../models/attachment";
 import { User } from "../models/user";
 import { connectedUsers } from "../state/connectedUsers";
-import fs from 'fs';
-
-
+import fs from "fs";
 
 export const sendAttachment = async (req: Request, res: Response) => {
     const image: any = req.files.image;
@@ -33,8 +31,7 @@ export const sendAttachment = async (req: Request, res: Response) => {
         attachmentTo: attachmentTo,
         createdOn: new Date(),
         publicId: uploadedFile.public_id,
-        status:
-            req.body.attachmentTo in connectedUsers ? "delivered" : "sent"
+        status: req.body.attachmentTo in connectedUsers ? "delivered" : "sent"
     });
 
     newAttachment.save();
@@ -47,7 +44,7 @@ export const sendAttachment = async (req: Request, res: Response) => {
     }
 
     res.json(newAttachment);
-}
+};
 
 export const deleteAttachment = async (req: Request, res: Response) => {
     const attachmentId = req.params.attachmentId;
@@ -67,4 +64,4 @@ export const deleteAttachment = async (req: Request, res: Response) => {
     }
 
     res.json(result);
-}
+};

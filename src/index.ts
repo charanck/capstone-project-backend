@@ -1,80 +1,73 @@
-import { deleteMessage, sendMessage } from './controllers/messageController';
-import express,{Express,Request,Response} from 'express';
-import {PORT,ENVIRONMENT,FRONTEND_IP} from './config';
-import { initializeDB } from './middlewares/connectToDb';
-import helmet from 'helmet';
-import cors from 'cors';
-import jwt from 'jsonwebtoken';
-import { connectToCloudinary } from './middlewares/connectToCloudinary';
-import upload from 'express-fileupload';
-
-// Helpers
-import { verifyToken } from './helpers/verifyToken';
+import { deleteMessage } from "./controllers/messageController";
+import express, { Express, Request, Response } from "express";
+import { PORT } from "./config";
+import { initializeDB } from "./middlewares/connectToDb";
+import helmet from "helmet";
+import cors from "cors";
+import jwt from "jsonwebtoken";
+import { connectToCloudinary } from "./middlewares/connectToCloudinary";
+import upload from "express-fileupload";
 
 // Routers
-import { userRouter } from './routes/userRoute';
-import { attachmentRouter } from './routes/attachmentRoute';
-import { feedbackRouter } from './routes/feedbackRoute';
+import { userRouter } from "./routes/userRoute";
+import { attachmentRouter } from "./routes/attachmentRoute";
+import { feedbackRouter } from "./routes/feedbackRoute";
+import { messageRouter } from "./routes/messageRoute";
 
-const app:Express = express();
+const app: Express = express();
 
 // Middleware
 // Cors config
-if(ENVIRONMENT !== "DEV") cors({origin:FRONTEND_IP})
-else cors();
+app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use(initializeDB);
 app.use(connectToCloudinary);
-app.use(upload())
-
+app.use(upload());
 
 // Socket configuration
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { connectedUsers } from './state/connectedUsers';
-import { initializeDBSocket } from './middlewares/connectToDbInSocket';
+import { initializeDBSocket } from "./middlewares/connectToDbInSocket";
 
 // Socket controllers
-import { userConnected , userDisconnected} from './controllers/userController';
+import { userConnected, userDisconnected } from "./controllers/userController";
 
 const httpServer = createServer(app);
-const io = new Server(httpServer);
-
+const io = new Server(httpServer, {
+    cors: {
+        origin: "*"
+    }
+});
 
 io.on("connection", async (socket) => {
     // init DB
     await initializeDBSocket();
 
     await userConnected(socket);
-    const token:string = String(socket.handshake.headers.token);
-    const data : any = jwt.verify(token,process.env.JWT_SECRET_KEY);
+    const token: string = String(socket.handshake.headers.token);
+    let data: any;
+    try {
+        data = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    } catch (err) {
+        console.log(err);
+    }
 
-    // Socket Events
-    socket.on('sendMessage',async (data)=>{
-        sendMessage(data);
-    });
-
-    socket.on('deleteMessage',async (data)=>{
-        deleteMessage(data);
-    });
-
-    socket.on('disconnect', async function() {
+    socket.on("disconnect", async function () {
         await userDisconnected(data);
     });
 });
 
 // ROUTES
-app.use('/users',userRouter);
-app.use('/attachments',attachmentRouter);
-app.use('/feedbacks',feedbackRouter)
+app.use("/users", userRouter);
+app.use("/attachments", attachmentRouter);
+app.use("/feedbacks", feedbackRouter);
+app.use("/messages", messageRouter);
 
-
-app.get('/test',(req:Request,res:Response)=>{
-    res.json({message:"OK"});
+app.get("/test", (req: Request, res: Response) => {
+    res.json({ message: "OK" });
 });
 
-
-
-httpServer.listen(PORT,():void =>{console.log(`Listening on port ${PORT}`);
+httpServer.listen(PORT, (): void => {
+    console.log(`Listening on port ${PORT}`);
 });

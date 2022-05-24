@@ -8,7 +8,7 @@ import { connectedUsers } from '../state/connectedUsers';
 
 
 export const signupUser = async(req:Request,res:Response)=>{
-    const { username, email, gender, password, DOB, role } = req.body;
+    const { username, email, gender, password, role } = req.body;
     const isDuplicateUsername = await User.findOne({ username: username });
     if (isDuplicateUsername)
         return res.status(409).json({ message: "username already exists" });
@@ -18,7 +18,6 @@ export const signupUser = async(req:Request,res:Response)=>{
         username: username,
         email: email,
         hash:hash,
-        DOB: new Date(DOB),
         gender: gender,
         role: role,
         isActive: false,
@@ -46,7 +45,7 @@ export const loginUser = async(req:Request,res:Response)=>{
 
         const token = jwt.sign(data, jwtSecretKey,{expiresIn:expiresIn});
 
-        res.json({token,userId:user._id});
+        res.json({token,user:user});
     }else{
         res.status(401).json({message:"password doesn't match"});
     }
@@ -106,4 +105,27 @@ export const userDisconnected = async(data:any)=>{
         if(key === data.userId) continue;
         connectedUsers[key].emit('userDisconnected',{userId:data.userId});
     }
+}
+
+export const getAllUsers = async(req:Request,res:Response)=>{
+    const users = await User.find();
+    res.json(users);
+}
+
+export const getUser = async(req:Request,res:Response)=>{
+    const user = await User.findOne({_id:req.params.userId});
+    res.json(user);
+}
+
+export const putUser = async(req:Request,res:Response) =>{
+    const { userId } = req.params;
+    const {status} = req.body;
+
+    const user = await User.findOne({_id:userId});
+
+    user.status =  status;
+
+    await user.save();
+
+    res.send();
 }

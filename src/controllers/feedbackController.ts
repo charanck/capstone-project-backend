@@ -14,7 +14,7 @@ export const createFeedback = async(req:Request,res:Response)=>{
     const token:string = String(req.headers.token)
     const data:any = jwt.verify(token,process.env.JWT_SECRET_KEY);
 
-    const currentUser:any = await User.find({_id:data.userId});
+    const currentUser:any = await User.findOne({_id:data.userId});
 
     const newFeedback = new Feedback({answerOne:answerOne,answerTwo:answerTwo,answerThree:answerThree});
     await newFeedback.save();
@@ -22,5 +22,5 @@ export const createFeedback = async(req:Request,res:Response)=>{
     currentUser.feedback = newFeedback;
     await currentUser.save();
 
-    res.json({message:"feedback saved"});
+    res.json(newFeedback);
 }
